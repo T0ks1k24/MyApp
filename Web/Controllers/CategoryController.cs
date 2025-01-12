@@ -41,6 +41,20 @@ namespace Web.Controllers
             return CreatedAtAction(nameof(GetCategoryById), new { id = addCategrory.Id }, addCategrory);
         }
 
+        [HttpPut]
+        public async Task<IActionResult> UpdateCategroy(Category category)
+        {
+            var updateCategory = await _categoryService.UpdateCategoryAsync(category);
+            return Ok(updateCategory);
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteCategory(int id)
+        {
+            await _categoryService.DeleteCategoryAsync(id);
+            return Ok("Delete Category");
+        }
+
 
         
     }
