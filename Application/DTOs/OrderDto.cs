@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace Application.DTOs
 {
-    public class CategoryDto
+    public class OrderDto
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public int UserId { get; set; }
+        public decimal TotalPrice { get; set; }
         public DateTime CreatedAt { get; set; }
-
+        public string Status { get; set; } // e.g., Pending, Completed
+        public List<OrderItemDto> OrderItems { get; set; }
     }
 }

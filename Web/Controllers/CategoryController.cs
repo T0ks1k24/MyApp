@@ -1,4 +1,7 @@
-﻿using Application.Interfaces;
+﻿using Application.DTOs;
+using Application.Interfaces;
+using Application.Services;
+using Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,19 +19,29 @@ namespace Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAllCategories()
         {
             var category = await _categoryService.GetAllCategoryAsync();
             return Ok(category);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetCategoryById(int id)
         {
             var category = await _categoryService.GetCategoryByIdAsync(id);
             if (category == null) return null;
 
             return Ok(category);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateCategory([FromBody] Category category)
+        {
+            var addCategrory = await _categoryService.AddCategroyAsync(category);
+            return CreatedAtAction(nameof(GetCategoryById), new { id = addCategrory.Id }, addCategrory);
+        }
+
+
+        
     }
 }

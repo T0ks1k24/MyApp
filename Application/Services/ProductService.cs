@@ -1,5 +1,6 @@
 ﻿using Application.DTOs;
 using Application.Interfaces;
+using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
 using System;
@@ -12,59 +13,53 @@ namespace Application.Services
 {
     public class ProductService : IProductService
     {
+        private readonly IMapper _mapper;
+
         private readonly IRepository<Product> _productRepository;
         private readonly IProductRepository _productRepositories;
 
         private readonly IRepository<Category> _categoryRepository;
 
-        public ProductService(IRepository<Product> productRepository, IRepository<Category> categoryRepository, IProductRepository productRepositories)
+        public ProductService(IRepository<Product> productRepository, IRepository<Category> categoryRepository, IProductRepository productRepositories, IMapper mapper)
         {
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
             _productRepositories = productRepositories;
+            _mapper = mapper;
         }
 
+        //Get all product
         public async Task<IEnumerable<ProductDto>> GetAllProductAsync()
         {
-            var products = await _productRepository.GetAllAsync();
+            var products = await _productRepositories.GetProductsWithCategoryAsync();
+            if (products == null) return null;
 
-            return products.Select(p => new ProductDto
-            {
-                Id = p.Id,
-                Name = p.Name,
-                Description = p.Description,
-                Price = p.Price,
-                StockQuantity = p.StockQuantity,
-                CategoryName = _categoryRepository.GetByIdAsync(p.CategoryId).Result?.Name
-            });
+            return _mapper.Map<List<ProductDto>>(products);
+
         }
 
+        //Get product by id
         public async Task<ProductDto> GetProductByIdAsync(int id)
         {
-            var product = await _productRepository.GetByIdAsync(id);
+            var product = await _productRepositories.GetProductByIdAsync(id);
             if (product == null) return null;
 
-            var categoryName = (await _categoryRepository.GetByIdAsync(product.CategoryId))?.Name;
-
-            return new ProductDto
-            {
-                Id = product.Id,
-                Name = product.Name,
-                Description = product.Description,
-                Price = product.Price,
-                StockQuantity = product.StockQuantity,
-                CategoryName = product.Category?.Name
-            };
+            return _mapper.Map<ProductDto>(product);
         }
 
-        public async Task AddProductAsync(ProductDto productDto)
+        //Add product
+        public async Task<ProductDto> AddProductAsync(ProductDto productDto)
         {
-            var category = await _categoryRepository
-                .FindAsync(c => c.Name == productDto.CategoryName);
+            var category = await _productRepositories.GetCategoryByNameAsync(productDto.CategoryName);
 
-            if (category == null && !string.IsNullOrEmpty(productDto.CategoryName))
+            if (category == null)
             {
-                category = new Category { Name = productDto.CategoryName };
+                category = new Category
+                {
+                    Name = productDto.CategoryName,
+                    CreatedAt = DateTime.UtcNow
+                };
+
                 await _categoryRepository.AddAsync(category);
             }
 
@@ -74,12 +69,19 @@ namespace Application.Services
                 Description = productDto.Description,
                 Price = productDto.Price,
                 StockQuantity = productDto.StockQuantity,
-                CategoryId = category?.Id ?? 0
+                ImageUrl = productDto.ImageUrl,
+                CreatedAt = DateTime.UtcNow,
+                CategoryId = category.Id
             };
 
             await _productRepository.AddAsync(product);
+
+            var productDtoResult = _mapper.Map<ProductDto>(product);
+
+            return productDtoResult;
         }
 
+        //Update product
         public async Task UpdateProductAsync(ProductDto productDto)
         {
             var product = await _productRepository.GetByIdAsync(productDto.Id);
@@ -107,30 +109,23 @@ namespace Application.Services
             await _productRepository.UpdateAsync(product);
         }
 
+        //Remove product
         public async Task DeleteProductAsync(int id)
         {
             await _productRepository.DeleteAsync(id);
         }
 
-        public async Task<IEnumerable<ProductDto>> GetProductFiltered(ProductFilterDto filter)
+        //Get a product by filter
+        public async Task<IEnumerable<ProductDto>> GetFilteredProductsAsync(ProductFilterDto filter)
         {
-            var products = await _productRepositories.GetProductFiltered(filter);
+            if (filter == null)
+                return await GetAllProductAsync();
 
-            var productDtos = products.Select(p => new ProductDto
-            {
-                Id = p.Id,
-                Name = p.Name,
-                Description = p.Description,
-                Price = p.Price,
-                StockQuantity = p.StockQuantity,
-                CategoryName = _categoryRepository.GetByIdAsync(p.CategoryId).Result?.Name,
-                InStock = p.StockQuantity > 0
-            });
+            var products = await _productRepositories.GetFilteredProductsAsync(filter);
+            return _mapper.Map<List<ProductDto>>(products);
 
-            return productDtos;
         }
-
-
 
     }
 }
+

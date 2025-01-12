@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,17 +14,9 @@ namespace Application.DTOs
         public string Description { get; set; }
         public decimal Price { get; set; }
         public int StockQuantity { get; set; }
+        public string ImageUrl { get; set; }   
         public string CategoryName { get; set; }
-
-        public bool InStock { get; set; }
-
-        public ProductDto()
-        {
-            if (StockQuantity == 0)
-            {
-                InStock = false;
-            }
-            InStock = true;
-        }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
     }
 }

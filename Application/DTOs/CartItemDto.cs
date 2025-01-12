@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace Application.DTOs
 {
-    public class CategoryDto
+    public class CartItemDto
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public DateTime CreatedAt { get; set; }
-
+        public int ProductId { get; set; }
+        public string ProductName { get; set; }
+        public int Quantity { get; set; }
     }
 }

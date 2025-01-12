@@ -16,40 +16,42 @@ namespace Web.Controllers
             _productService = productService;
         }
 
+        // New Method
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> GetAll([FromQuery] ProductFilterDto filter)
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetProducts([FromQuery] ProductFilterDto filter)
         {
-
-            if (filter == null)
-            {
-                return BadRequest("Filter cannot be null.");
-            }
-
-            var products = await _productService.GetProductFiltered(filter);
-
+            var products = await _productService.GetFilteredProductsAsync(filter);
             return Ok(products);
 
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetProductById(int id)
         {
             var product = await _productService.GetProductByIdAsync(id);
-            if (product == null) return NotFound();
+            
+            if (product == null) 
+                return NotFound();
 
             return Ok(product);
         }
 
-
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] ProductDto productDto)
+        public async Task<IActionResult> CreateProduct([FromBody] ProductDto productDto)
         {
-            await _productService.AddProductAsync(productDto);
-            return Ok();
+            if (productDto == null)
+            {
+                return BadRequest("Invalid product data.");
+            }
+
+            var addedProduct = await _productService.AddProductAsync(productDto);
+            return CreatedAtAction(nameof(GetProductById), new { id = addedProduct.Id }, addedProduct);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Update([FromBody] ProductDto productDto)
+        // Old Method
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] ProductDto productDto)
         {
             await _productService.UpdateProductAsync(productDto);
             return Ok();

@@ -1,4 +1,4 @@
-﻿using Application.DTOs;
+﻿    using Application.DTOs;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -10,6 +10,11 @@ namespace Application.Interfaces
 {
     public interface IProductRepository
     {
-        Task<IEnumerable<Product>> GetProductFiltered(ProductFilterDto filter);
+        Task<Category> GetCategoryByNameAsync(string categoryName);
+        Task<Product> CreateProductAsync(Product product);
+        Task<Product> GetProductByIdAsync(int id);
+        Task UpdateAsync(int id,ProductDto productDto);
+        Task<List<Product>> GetProductsWithCategoryAsync();
+        Task<List<Product>> GetFilteredProductsAsync(ProductFilterDto filter);
     }
 }
