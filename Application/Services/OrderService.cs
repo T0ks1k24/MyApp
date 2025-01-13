@@ -39,7 +39,7 @@ namespace Application.Services
         }
 
         //Add order
-        public async Task<OrderDto> AddOrderAsync(int userId, Order order)
+        public async Task<OrderDto> CreateOrderAsync(int userId, Order order)
         {
             var addOrder = _mapper.Map<Order>(order);
             addOrder.UserId = userId;
@@ -49,12 +49,9 @@ namespace Application.Services
         }
 
         //Update order
-        public async Task<OrderDto> UpdateOrderAsync(Order order)
+        public async Task<OrderDto> UpdateOrderStatusAsync(int orderId, string status)
         {
-            await _orderRepository.UpdateAsync(order);
-
-            var orderDto = _mapper.Map<OrderDto>(order);
-            return orderDto;
+            return null;
         }
 
         //Delete order

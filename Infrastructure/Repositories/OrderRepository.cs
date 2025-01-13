@@ -26,5 +26,22 @@ namespace Infrastructure.Repositories
                 .ThenInclude(oi => oi.Product)
                 .ToListAsync();
         }
+
+        public async Task<Order> UpdateOrderStatusAsync(int orderId, string status)
+        {
+            var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == orderId);
+
+            if (order == null)
+            {
+                throw new ArgumentException($"Order with ID {orderId} not found.");
+            }
+
+            order.Status = status;
+            order.UpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            return order;
+        }
     }
 }

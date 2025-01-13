@@ -2,6 +2,7 @@
 using Application.Interfaces;
 using Application.Services;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,6 +26,7 @@ namespace Web.Controllers
             return Ok(category);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCategoryById(int id)
         {
@@ -34,6 +36,7 @@ namespace Web.Controllers
             return Ok(category);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> CreateCategory([FromBody] Category category)
         {
@@ -41,6 +44,7 @@ namespace Web.Controllers
             return CreatedAtAction(nameof(GetCategoryById), new { id = addCategrory.Id }, addCategrory);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         public async Task<IActionResult> UpdateCategroy(Category category)
         {
@@ -48,6 +52,7 @@ namespace Web.Controllers
             return Ok(updateCategory);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete]
         public async Task<IActionResult> DeleteCategory(int id)
         {

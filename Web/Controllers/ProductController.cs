@@ -1,5 +1,6 @@
 ﻿using Application.DTOs;
 using Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,6 +26,7 @@ namespace Web.Controllers
 
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProductById(int id)
         {
@@ -36,6 +38,7 @@ namespace Web.Controllers
             return Ok(product);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> CreateProduct([FromBody] ProductDto productDto)
         {
@@ -49,7 +52,7 @@ namespace Web.Controllers
         }
 
         // Old Method
-
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] ProductDto productDto)
         {
@@ -57,6 +60,7 @@ namespace Web.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {

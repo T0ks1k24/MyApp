@@ -15,9 +15,19 @@ namespace Web
             CreateMap<Order, OrderDto>();
             CreateMap<OrderItem, OrderItemDto>()
                 .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name));
-            CreateMap<ShoppingCart, ShoppingCartDto>();
+
             CreateMap<CartItem, CartItemDto>()
-                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name));
+           .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name))
+           .ForMember(dest => dest.ProductPrice, opt => opt.MapFrom(src => src.Product.Price));
+
+            CreateMap<AddCartItemDto, CartItem>()
+                .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId));
+
+            CreateMap<ShoppingCart, ShoppingCartDto>()
+                .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.CartItems));
+
+
+
         }
     }
 }

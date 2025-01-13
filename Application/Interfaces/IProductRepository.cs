@@ -13,7 +13,7 @@ namespace Application.Interfaces
         Task<Category> GetCategoryByNameAsync(string categoryName);
         Task<Product> CreateProductAsync(Product product);
         Task<Product> GetProductByIdAsync(int id);
-        Task UpdateAsync(int id,ProductDto productDto);
+        Task UpdateAsync(int id,Product product);
         Task<List<Product>> GetProductsWithCategoryAsync();
         Task<List<Product>> GetFilteredProductsAsync(ProductFilterDto filter);
     }

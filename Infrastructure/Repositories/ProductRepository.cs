@@ -58,12 +58,9 @@ namespace Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task UpdateAsync(int id, ProductDto productDto)
+        public async Task UpdateAsync(int id, Product product)
         {
-            var product = await _context.Products.FindAsync(id);
-
-           
-                return;
+            await _context.Products.FindAsync(id);
         }
 
         public async Task<Category> GetCategoryByNameAsync(string categoryName)

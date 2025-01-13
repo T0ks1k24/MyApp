@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace Application.Interfaces
 {
-    public interface IOrderRepository
+    public interface IUserRepository
     {
-        Task<IEnumerable<Order>> GetOrdersByUserIdAsync(int userId);
-        Task<Order> UpdateOrderStatusAsync(int orderId, string status);
+        Task<User> GetUserByEmailAsync(string email);
+
+        Task AddUserAsync(User user);
     }
 }

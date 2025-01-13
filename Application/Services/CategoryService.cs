@@ -9,12 +9,14 @@ namespace Application.Services
     public class CategoryService : ICategoryService
     {
         private readonly IRepository<Category> _categoryRepository;
+        private readonly ICategoryRepository _categoryRepositories;
         private readonly IMapper _mapper;
 
-        public CategoryService(IRepository<Category> categoryRepository, IMapper mapper)
+        public CategoryService(IRepository<Category> categoryRepository, IMapper mapper, ICategoryRepository categoryRepositories)
         {
             _categoryRepository = categoryRepository;
             _mapper = mapper;
+            _categoryRepositories = categoryRepositories;
         }
 
         //Get all categories

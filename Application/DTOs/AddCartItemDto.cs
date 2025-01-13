@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace Application.DTOs
 {
-    public class ShoppingCartDto
+    public class AddCartItemDto
     {
-        public int Id { get; set; }
         public int UserId { get; set; }
-        public List<CartItemDto> Items { get; set; }
-        public decimal TotalAmount => Items.Sum(item => item.TotalPrice);
+        public int ProductId { get; set; }
+        public int Quantity { get; set; } 
     }
 }

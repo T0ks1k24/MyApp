@@ -4,9 +4,11 @@ using Application.Services;
 using Domain.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
-using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
 
 namespace Web
 {
@@ -15,6 +17,24 @@ namespace Web
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.AddAuthentication("Bearer")
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                        ValidAudience = builder.Configuration["Jwt:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                    };
+                });
+
+            builder.Services.AddAuthorization();
+
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
@@ -31,7 +51,15 @@ namespace Web
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped<IProductService, ProductService>();
 
+            builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
+            builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
+
             builder.Services.AddScoped<ICategoryService, CategoryService>();
+
+            builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+
 
             var app = builder.Build();
 
@@ -44,7 +72,9 @@ namespace Web
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
             app.UseAuthorization();
+            app.UseAuthentication();
 
             app.MapControllers();
 
