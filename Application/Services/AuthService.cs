@@ -1,5 +1,4 @@
-﻿using Application.Interfaces;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +11,8 @@ using System.Security;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using Application.Interfaces.IServices;
+using Application.Interfaces.IRepositories;
 
 namespace Application.Services
 {

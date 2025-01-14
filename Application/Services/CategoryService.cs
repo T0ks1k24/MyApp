@@ -1,5 +1,6 @@
 ﻿using Application.DTOs;
-using Application.Interfaces;
+using Application.Interfaces.IRepositories;
+using Application.Interfaces.IServices;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
@@ -22,7 +23,7 @@ namespace Application.Services
         //Get all categories
         public async Task<IEnumerable<CategoryDto>> GetAllCategoryAsync()
         {
-            var categories = await _categoryRepository.GetAllAsync();
+            var categories = await _categoryRepositories.GetCategoryAsync();
 
             return _mapper.Map<List<CategoryDto>>(categories);
         }
@@ -30,25 +31,24 @@ namespace Application.Services
         //Get category by id
         public async Task<CategoryDto> GetCategoryByIdAsync(int id)
         {
-            var category = await _categoryRepository.GetByIdAsync(id);
+            var category = await _categoryRepositories.GetCategoryByIdAsync(id);
             if (category == null) return null;
 
             return _mapper.Map<CategoryDto>(category);
         }
 
         //Add category
-        public async Task<CategoryDto> AddCategroyAsync(Category category)
+        public async Task<CategoryDto> AddCategroyAsync(CategoryDto categoryDto)
         {
             var addCategory = new Category
             {
-                Name = category.Name,
+                Name = categoryDto.Name,
                 CreatedAt = DateTime.UtcNow,
             };
 
-            await _categoryRepository.AddAsync(addCategory);
+            await _categoryRepositories.CreateCategoryAsync(addCategory);
 
-            var categoryResultDto = _mapper.Map<CategoryDto>(category);
-            return categoryResultDto;
+            return _mapper.Map<CategoryDto>(addCategory);
         }
 
         //Update category

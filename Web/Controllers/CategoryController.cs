@@ -1,5 +1,5 @@
 ﻿using Application.DTOs;
-using Application.Interfaces;
+using Application.Interfaces.IServices;
 using Application.Services;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -38,7 +38,7 @@ namespace Web.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<IActionResult> CreateCategory([FromBody] Category category)
+        public async Task<IActionResult> CreateCategory([FromBody] CategoryDto category)
         {
             var addCategrory = await _categoryService.AddCategroyAsync(category);
             return CreatedAtAction(nameof(GetCategoryById), new { id = addCategrory.Id }, addCategrory);
@@ -46,7 +46,7 @@ namespace Web.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPut]
-        public async Task<IActionResult> UpdateCategroy(Category category)
+        public async Task<IActionResult> UpdateCategroy(CategoryDto categoryDto)
         {
             var updateCategory = await _categoryService.UpdateCategoryAsync(category);
             return Ok(updateCategory);

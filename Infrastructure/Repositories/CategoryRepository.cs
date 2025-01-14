@@ -1,6 +1,7 @@
-﻿using Application.Interfaces;
+﻿using Application.Interfaces.IRepositories;
 using Domain.Entities;
 using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,18 +19,46 @@ namespace Infrastructure.Repositories
             _context = context;
         }
 
-        public Task<Category> CreateProductAsync(Category category)
+        //Get all
+        public async Task<List<Category>> GetCategoryAsync()
         {
+            var query = await _context.Categories.ToListAsync();
+            return query;
         }
 
-        public Task<Category> GetCategoryAsync()
+        public async Task<Category> GetCategoryByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var query = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
+            return query;
         }
 
-        public Task<Category> GetProductByIdAsync(int id)
+        public async Task<Category> AddCategoryAsync(Category category)
         {
-            throw new NotImplementedException();
+            _context.Categories.Add(category);
+            await _context.SaveChangesAsync();
+            return category;
+        }
+
+        public async Task<Category> UpdateCategoryAsync(int id, Category category)
+        {
+            var query = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
+            if (query == null) return null;
+
+            query.Name = category.Name;
+            query.CreatedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+
+            return query;
+        }
+
+        public async Task<bool> DeleteCategoryAsync(int id)
+        {
+            var query = await _context.Categories.FindAsync(id);
+            if (query == null) return false;
+
+            _context.Remove(query);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

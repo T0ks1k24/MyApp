@@ -1,5 +1,6 @@
 ﻿using Application.DTOs;
-using Application.Interfaces;
+using Application.Interfaces.IRepositories;
+using Application.Interfaces.IServices;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
@@ -13,13 +14,12 @@ namespace Application.Services
 {
     public class OrderService : IOrderService
     {
-        private readonly IRepository<Order> _orderRepository;
         private readonly IOrderRepository _orderRepositories;
         private readonly IMapper _mapper;
 
-        public OrderService(IRepository<Order> orderRepository, IMapper mapper)
+        public OrderService(IOrderRepository orderRepositories, IMapper mapper)
         {
-            _orderRepository = orderRepository;
+            _orderRepositories = orderRepositories;
             _mapper = mapper;
         }
 
@@ -51,7 +51,7 @@ namespace Application.Services
         //Update order
         public async Task<OrderDto> UpdateOrderStatusAsync(int orderId, string status)
         {
-            return null;
+            var order = _orderRepository.(orderId);
         }
 
         //Delete order

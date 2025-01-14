@@ -6,13 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Interfaces
+namespace Application.Interfaces.IServices
 {
     public interface ICategoryService
     {
         Task<IEnumerable<CategoryDto>> GetAllCategoryAsync();
         Task<CategoryDto> GetCategoryByIdAsync(int id);
-        Task<CategoryDto> AddCategroyAsync(Category category);
+        Task<CategoryDto> AddCategroyAsync(CategoryDto categoryDto);
         Task DeleteCategoryAsync(int id);
         Task<CategoryDto> UpdateCategoryAsync(Category category);
 

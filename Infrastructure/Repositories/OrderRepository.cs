@@ -1,7 +1,8 @@
-﻿using Application.Interfaces;
+﻿using Application.Interfaces.IRepositories;
 using Domain.Entities;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,33 @@ namespace Infrastructure.Repositories
         public OrderRepository(AppDbContext context)
         {
             _context = context;
+        }
+
+        public async Task<Order> AddOrderAsync(Order order)
+        {
+            _context.Orders.Add(order);
+            await _context.SaveChangesAsync();
+            return order;
+        }
+
+        public async Task<bool> DeleteOrderAsync(int orderId)
+        {
+            var delOrder = await _context.Orders.FindAsync(orderId);
+
+            if (delOrder != null)
+            {
+                _context.Remove(delOrder);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+
+            return false;
+        }
+
+        public async Task<IEnumerable<Order>> GetAllOrderAsync()
+        {
+            var order = await _context.Orders.ToListAsync();
+            return order;
         }
 
         public async Task<IEnumerable<Order>> GetOrdersByUserIdAsync(int userId)

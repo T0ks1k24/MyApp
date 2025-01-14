@@ -1,5 +1,5 @@
 ﻿using Application.DTOs;
-using Application.Interfaces;
+using Application.Interfaces.IRepositories;
 using Domain.Entities;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
