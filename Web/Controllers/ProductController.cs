@@ -98,11 +98,11 @@ public class ProductsController : ControllerBase
 
     [Authorize(Roles = "Admin")]
     [HttpDelete("{id:int}")]
-    public async Task<IActionResult> DeleteProduct(int id)
+    public async Task<IActionResult> RemoveProduct(int id)
     {
         try
         {
-            bool removeProduct = await _productService.DeleteProductAsync(id);
+            bool removeProduct = await _productService.RemoveProductAsync(id);
             if (removeProduct)
                 return Ok("Product removed successfully!");
 

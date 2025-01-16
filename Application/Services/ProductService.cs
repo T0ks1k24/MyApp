@@ -88,7 +88,7 @@ public class ProductService : IProductService
     }
 
     //Remove product
-    public async Task<bool> DeleteProductAsync(int id)
+    public async Task<bool> RemoveProductAsync(int id)
     {
         bool check = await _productRepository.RemoveProductAsync(id);
         return check;

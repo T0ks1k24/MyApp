@@ -22,7 +22,7 @@ public class CategoryService : ICategoryService
     {
         var categories = await _categoryRepository.GetAllCategoryAsync();
 
-        return _mapper.Map<List<CategoryDto>>(categories);
+        return _mapper.Map<IEnumerable<CategoryDto>>(categories);
     }
 
     //Get category by id
@@ -35,7 +35,7 @@ public class CategoryService : ICategoryService
     }
 
     //Add category
-    public async Task<CategoryDto> AddCategroyAsync(CategoryDto categoryDto)
+    public async Task<bool> AddCategroyAsync(CategoryDto categoryDto)
     {
         var addCategory = new Category
         {
@@ -43,24 +43,23 @@ public class CategoryService : ICategoryService
             CreatedAt = DateTime.UtcNow,
         };
 
-        await _categoryRepository.AddCategoryAsync(addCategory);
-
-        return _mapper.Map<CategoryDto>(addCategory);
+        var check = await _categoryRepository.AddCategoryAsync(addCategory);
+        return check;
     }
 
     //Update category
-    public async Task<CategoryDto> UpdateCategoryAsync(int id, Category category)
+    public async Task<bool> UpdateCategoryAsync(int id, CategoryDto categoryDto)
     {
-        await _categoryRepository.UpdateCategoryAsync(id, category);
-
-        var categoryDto = _mapper.Map<CategoryDto>(category);
-        return categoryDto;
+        var category = _mapper.Map<Category>(categoryDto);
+        bool check = await _categoryRepository.UpdateCategoryAsync(id, category);
+        return check;
     }
 
     //Delete category
-    public async Task RemoveCategoryAsync(int id)
+    public async Task<bool> RemoveCategoryAsync(int id)
     {
-        await _categoryRepository.RemoveCategoryAsync(id);
+        bool check = await _categoryRepository.RemoveCategoryAsync(id);
+        return check;
     }
 
 }

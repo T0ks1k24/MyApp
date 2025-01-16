@@ -15,6 +15,6 @@ namespace Application.Interfaces.IServices
         Task<ProductDto> GetProductByIdAsync(int id);
         Task<bool> AddProductAsync(AddProductDto addProductDto);
         Task<bool> UpdateProductAsync(int id, UpdateProductDto updateProductDto);
-        Task<bool> DeleteProductAsync(int id);
+        Task<bool> RemoveProductAsync(int id);
     }
 }

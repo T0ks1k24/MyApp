@@ -48,6 +48,7 @@ public class CategryRepository : ICategoryRepository
         if (query == null) return false;
 
         query.Name = category.Name;
+
         await _context.SaveChangesAsync();
         return true;
     }
