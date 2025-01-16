@@ -1,78 +1,75 @@
-﻿using Application.DTOs;
-using Application.Interfaces.IRepositories;
-using Domain.Entities;
+﻿using Domain.Entities;
+using Domain.Interfaces;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Infrastructure.Repositories
+namespace Infrastructure.Repositories;
+
+public class ProductRepository : IProductRepository
 {
-    public class ProductRepository : IProductRepository
+    private readonly AppDbContext _context;
+
+    public ProductRepository(AppDbContext context)
     {
-        private readonly AppDbContext _context;
+        _context = context;
+    }
 
-        public ProductRepository(AppDbContext context)
-        {
-            _context = context;
-        }
+    //Get All Product
+    public async Task<IEnumerable<Product>> GetAllProductAsync()
+    {
+        var query = await _context.Products
+            .AsNoTracking()
+            .Include(c => c.Category)
+            .ToListAsync();
 
+        return query;
+    }
 
-        public async Task<Product> GetProductByIdAsync(int id)
-        {
-            return await _context.Products
-                .Include(p => p.Category)
-                .FirstOrDefaultAsync(p => p.Id == id);
-        }
+    //Get Product By Id
+    public async Task<Product> GetProductByIdAsync(int id)
+    {
+        var query = await _context.Products
+            .AsNoTracking()
+            .Include(p => p.Category)
+            .FirstOrDefaultAsync(p => p.Id == id);
 
-        public async Task<List<Product>> GetFilteredProductsAsync(ProductFilterDto filter)
-        {
-            var query = _context.Products.AsQueryable();
+        return query;
+    }
 
-            if (!string.IsNullOrEmpty(filter.Name))
-                query = query.Where(p => p.Name.ToLower().Contains(filter.Name.ToLower()));
-            if (filter.MinPrice.HasValue)
-                query = query.Where(p => p.Price >= filter.MinPrice.Value);
-            if (filter.MaxPrice.HasValue)
-                query = query.Where(p => p.Price <= filter.MaxPrice.Value);
-            if (!string.IsNullOrEmpty(filter.CategoryName))
-                query = query.Where(p => p.Category.Name.ToLower().Contains(filter.CategoryName.ToLower()));
-            if (!string.IsNullOrEmpty(filter.SortBy))
-                if (filter.SortBy.ToLower() == "price")
-                    query = filter.SortDescending ? query.OrderByDescending(p => p.Price) : query.OrderBy(p => p.Price);
-                else if (filter.SortBy.ToLower() == "name")
-                    query = filter.SortDescending ? query.OrderByDescending(p => p.Name) : query.OrderBy(p => p.Name);
-                else if (filter.SortBy.ToLower() == "id")
-                    query = filter.SortDescending ? query.OrderByDescending(p => p.Id) : query.OrderBy(p => p.Id);
+    //Add New Product
+    public async Task<bool> AddProductAsync(Product product)
+    {
+        _context.Products.Add(product);
+        await _context.SaveChangesAsync();
+        return true;
+    }
 
-            return await query.Include(p => p.Category).ToListAsync();
-        }
+    //Updated Product
+    public async Task<bool> UpdateProductAsync(int id, Product product)
+    {
+        var query = await _context.Products.FindAsync(id);
+        if (query == null) return false;
 
-        public async Task<List<Product>> GetProductsWithCategoryAsync()
-        {
-            return await _context.Products
-                .Include(p => p.Category)
-                .ToListAsync();
-        }
+        query.Name = product.Name;
+        query.Description = product.Description;
+        query.Price = product.Price;
+        query.StockQuantity = product.StockQuantity;
+        query.ImageUrl = product.ImageUrl;
+        query.CategoryId = product.CategoryId;
+        query.UpdatedAt = DateTime.UtcNow;
 
-        public async Task UpdateAsync(int id, Product product)
-        {
-            await _context.Products.FindAsync(id);
-        }
+        await _context.SaveChangesAsync();
+        return true;
+    }
 
-        public async Task<Category> GetCategoryByNameAsync(string categoryName)
-        {
-            return await _context.Categories.FirstOrDefaultAsync(c => c.Name == categoryName);
-        }
+    //Remove Product By Id
+    public async Task<bool> RemoveProductAsync(int id)
+    {
+        var query = await _context.Products.FindAsync(id);
+        if (query == null) return false;
 
-        public async Task<Product> CreateProductAsync(Product product)
-        {
-            _context.Products.Add(product);
-            await _context.SaveChangesAsync();
-            return product;
-        }
+        _context.Remove(query);
+        await _context.SaveChangesAsync();
+        return true;
     }
 }

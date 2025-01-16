@@ -1,25 +1,20 @@
 ﻿using Application.DTOs;
-using Application.Interfaces.IRepositories;
 using Application.Interfaces.IServices;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Application.Services
 {
     public class OrderService : IOrderService
     {
-        private readonly IOrderRepository _orderRepositories;
+        private readonly IOrderRepository _orderRepository;
         private readonly IMapper _mapper;
 
-        public OrderService(IOrderRepository orderRepositories, IMapper mapper)
+        public OrderService(IOrderRepository orderRepository, IMapper mapper)
         {
-            _orderRepositories = orderRepositories;
+            _orderRepository = orderRepository;
             _mapper = mapper;
         }
 
@@ -27,44 +22,41 @@ namespace Application.Services
         //Get all orders
         public async Task<IEnumerable<OrderDto>> GetAllOrderAsync()
         {
-            var orders = await _orderRepository.GetAllAsync();
+            var orders = await _orderRepository.GetAllOrderAsync();
             return _mapper.Map<IEnumerable<OrderDto>>(orders);
         }
 
-        //Get order by id
-        public async Task<OrderDto> GetOrderByIdAsync(int id)
+        public async Task<IEnumerable<OrderDto>> GetOrderForUserAsync(int userId)
         {
-            var order = await _orderRepository.GetByIdAsync(id);
-            return _mapper.Map<OrderDto>(order);
+            var orders = await _orderRepository.GetOrdersByUserIdAsync(userId);
+            return _mapper.Map<IEnumerable<OrderDto>>(orders);
         }
 
+
         //Add order
-        public async Task<OrderDto> CreateOrderAsync(int userId, Order order)
+        public async Task<OrderDto> AddOrderAsync(int userId, Order order)
         {
             var addOrder = _mapper.Map<Order>(order);
             addOrder.UserId = userId;
             addOrder.CreatedAt = DateTime.UtcNow;
-            await _orderRepository.AddAsync(addOrder);
+            await _orderRepository.AddOrderAsync(addOrder);
             return _mapper.Map<OrderDto>(addOrder);
         }
 
         //Update order
         public async Task<OrderDto> UpdateOrderStatusAsync(int orderId, string status)
         {
-            var order = _orderRepository.(orderId);
+            var order = await _orderRepository.UpdateOrderStatusAsync(orderId, status);
+            return _mapper.Map<OrderDto>(order);
         }
 
         //Delete order
         public async Task DeleteOrderAsync(int id)
         {
-            await _orderRepository.DeleteAsync(id);
+            await _orderRepository.RemoveOrderAsync(id);
         }
 
         //Get a order for user
-        public async Task<IEnumerable<OrderDto>> GetOrderForUserAsync(int userId)
-        {
-            var orders = await _orderRepositories.GetOrdersByUserIdAsync(userId);
-            return _mapper.Map<IEnumerable<OrderDto>>(orders);
-        }
+        
     }
 }

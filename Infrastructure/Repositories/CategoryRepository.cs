@@ -1,64 +1,65 @@
-﻿using Application.Interfaces.IRepositories;
-using Domain.Entities;
+﻿using Domain.Entities;
+using Domain.Interfaces;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Infrastructure.Repositories
+namespace Infrastructure.Repositories;
+
+
+public class CategryRepository : ICategoryRepository
 {
-    public class CategryRepository : ICategoryRepository
+    private readonly AppDbContext _context;
+
+    public CategryRepository(AppDbContext context)
     {
-        private readonly AppDbContext _context;
+        _context = context;
+    }
 
-        public CategryRepository(AppDbContext context)
-        {
-            _context = context;
-        }
+    //Get All Category
+    public async Task<IEnumerable<Category>> GetAllCategoryAsync()
+    {
+        var query = await _context.Categories
+            .AsNoTracking()
+            .ToListAsync();
+        return query;
+    }
 
-        //Get all
-        public async Task<List<Category>> GetCategoryAsync()
-        {
-            var query = await _context.Categories.ToListAsync();
-            return query;
-        }
+    //Get Category By Id
+    public async Task<Category> GetCategoryByIdAsync(int id)
+    {
+        var query = await _context.Categories
+            .AsNoTracking()
+            .FirstOrDefaultAsync(c => c.Id == id);
+        return query;
+    }
 
-        public async Task<Category> GetCategoryByIdAsync(int id)
-        {
-            var query = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
-            return query;
-        }
+    //Add New Category
+    public async Task<bool> AddCategoryAsync(Category category)
+    {
+        _context.Categories.Add(category);
+        await _context.SaveChangesAsync();
+        return true;
+    }
 
-        public async Task<Category> AddCategoryAsync(Category category)
-        {
-            _context.Categories.Add(category);
-            await _context.SaveChangesAsync();
-            return category;
-        }
+    //Update Category
+    public async Task<bool> UpdateCategoryAsync(int id, Category category)
+    {
+        var query = await _context.Categories.FindAsync(id);
+        if (query == null) return false;
 
-        public async Task<Category> UpdateCategoryAsync(int id, Category category)
-        {
-            var query = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
-            if (query == null) return null;
+        query.Name = category.Name;
+        await _context.SaveChangesAsync();
+        return true;
+    }
 
-            query.Name = category.Name;
-            query.CreatedAt = DateTime.UtcNow;
-            await _context.SaveChangesAsync();
+    //Remove Category
+    public async Task<bool> RemoveCategoryAsync(int id)
+    {
+        var query = await _context.Categories.FindAsync(id);
+        if (query == null) return false;
 
-            return query;
-        }
-
-        public async Task<bool> DeleteCategoryAsync(int id)
-        {
-            var query = await _context.Categories.FindAsync(id);
-            if (query == null) return false;
-
-            _context.Remove(query);
-            await _context.SaveChangesAsync();
-            return true;
-        }
+        _context.Remove(query);
+        await _context.SaveChangesAsync();
+        return true;
     }
 }

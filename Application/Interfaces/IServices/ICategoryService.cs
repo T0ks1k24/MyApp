@@ -13,8 +13,8 @@ namespace Application.Interfaces.IServices
         Task<IEnumerable<CategoryDto>> GetAllCategoryAsync();
         Task<CategoryDto> GetCategoryByIdAsync(int id);
         Task<CategoryDto> AddCategroyAsync(CategoryDto categoryDto);
-        Task DeleteCategoryAsync(int id);
-        Task<CategoryDto> UpdateCategoryAsync(Category category);
+        Task<CategoryDto> UpdateCategoryAsync(int id, Category category);
+        Task RemoveCategoryAsync(int id);
 
     }
 }

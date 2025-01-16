@@ -19,46 +19,46 @@ namespace Web.Controllers
             _categoryService = categoryService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllCategories()
-        {
-            var category = await _categoryService.GetAllCategoryAsync();
-            return Ok(category);
-        }
+        //[HttpGet]
+        //public async Task<IActionResult> GetAllCategories()
+        //{
+        //    var category = await _categoryService.GetAllCategoryAsync();
+        //    return Ok(category);
+        //}
 
-        [Authorize(Roles = "Admin")]
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetCategoryById(int id)
-        {
-            var category = await _categoryService.GetCategoryByIdAsync(id);
-            if (category == null) return null;
+        //[Authorize(Roles = "Admin")]
+        //[HttpGet("{id}")]
+        //public async Task<IActionResult> GetCategoryById(int id)
+        //{
+        //    var category = await _categoryService.GetCategoryByIdAsync(id);
+        //    if (category == null) return null;
 
-            return Ok(category);
-        }
+        //    return Ok(category);
+        //}
 
-        [Authorize(Roles = "Admin")]
-        [HttpPost]
-        public async Task<IActionResult> CreateCategory([FromBody] CategoryDto category)
-        {
-            var addCategrory = await _categoryService.AddCategroyAsync(category);
-            return CreatedAtAction(nameof(GetCategoryById), new { id = addCategrory.Id }, addCategrory);
-        }
+        //[Authorize(Roles = "Admin")]
+        //[HttpPost]
+        //public async Task<IActionResult> CreateCategory([FromBody] CategoryDto category)
+        //{
+        //    var addCategrory = await _categoryService.AddCategroyAsync(category);
+        //    return CreatedAtAction(nameof(GetCategoryById), new { id = addCategrory.Id }, addCategrory);
+        //}
 
-        [Authorize(Roles = "Admin")]
-        [HttpPut]
-        public async Task<IActionResult> UpdateCategroy(CategoryDto categoryDto)
-        {
-            var updateCategory = await _categoryService.UpdateCategoryAsync(category);
-            return Ok(updateCategory);
-        }
+        //[Authorize(Roles = "Admin")]
+        //[HttpPut]
+        //public async Task<IActionResult> UpdateCategroy(CategoryDto categoryDto)
+        //{
+        //    var updateCategory = await _categoryService.UpdateCategoryAsync(category);
+        //    return Ok(updateCategory);
+        //}
 
-        [Authorize(Roles = "Admin")]
-        [HttpDelete]
-        public async Task<IActionResult> DeleteCategory(int id)
-        {
-            await _categoryService.DeleteCategoryAsync(id);
-            return Ok("Delete Category");
-        }
+        //[Authorize(Roles = "Admin")]
+        //[HttpDelete]
+        //public async Task<IActionResult> DeleteCategory(int id)
+        //{
+        //    await _categoryService.RemoveCategoryAsync(id);
+        //    return Ok("Delete Category");
+        //}
 
 
         

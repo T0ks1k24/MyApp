@@ -1,4 +1,5 @@
 ﻿using Application.DTOs;
+using Application.DTOs.Product;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -10,11 +11,10 @@ namespace Application.Interfaces.IServices
 {
     public interface IProductService
     {
-        Task<IEnumerable<ProductDto>> GetAllProductAsync();
+        Task<IEnumerable<ProductDto>> GetAllProductAsync(ProductFilterDto filter);
         Task<ProductDto> GetProductByIdAsync(int id);
-        Task<IEnumerable<ProductDto>> GetFilteredProductsAsync(ProductFilterDto filter);
-        Task<ProductDto> AddProductAsync(ProductDto productDto);
-        Task UpdateProductAsync(ProductDto productDto);
-        Task DeleteProductAsync(int id);
+        Task<bool> AddProductAsync(AddProductDto addProductDto);
+        Task<bool> UpdateProductAsync(int id, UpdateProductDto updateProductDto);
+        Task<bool> DeleteProductAsync(int id);
     }
 }

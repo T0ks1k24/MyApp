@@ -12,7 +12,7 @@ using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using Application.Interfaces.IServices;
-using Application.Interfaces.IRepositories;
+using Domain.Interfaces;
 
 namespace Application.Services
 {
@@ -27,7 +27,7 @@ namespace Application.Services
             _configuration = configuration;
         }
 
-
+        //Register user
         public async Task RegisterAsync(RegisterDto registerDto)
         {
             var existingUser = await _userRepository.GetUserByEmailAsync(registerDto.Email);
@@ -42,13 +42,13 @@ namespace Application.Services
                 LastName = registerDto.LastName,
                 Email = registerDto.Email,
                 Password = passwordHash,
-                Role = registerDto.Role,
                 CreatedAt = DateTime.UtcNow,
             };
 
             await _userRepository.AddUserAsync(user);
         }
 
+        //Login user
         public async Task<string> LoginAsync(LoginDto loginDto)
         {
             var user = await _userRepository.GetUserByEmailAsync(loginDto.Email);
@@ -59,6 +59,7 @@ namespace Application.Services
             return GenerateJwtToken(user);
         }
 
+        
         private string HashPassword(string password)
         {
             using var sha256 = SHA256.Create();

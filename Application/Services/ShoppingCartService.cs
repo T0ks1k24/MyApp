@@ -1,13 +1,8 @@
 ﻿using Application.DTOs;
-using Application.Interfaces.IRepositories;
 using Application.Interfaces.IServices;
 using AutoMapper;
 using Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Domain.Interfaces;
 
 namespace Application.Services
 {
