@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Web.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
@@ -16,8 +16,8 @@ namespace Web.Controllers
             _authService = authService;
         }
 
-        [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterDto registerDto)
+        [HttpPost("Register")]
+        public async Task<IActionResult> UserRegister(RegisterDto registerDto)
         {
             try
             {
@@ -30,8 +30,8 @@ namespace Web.Controllers
             }
         }
 
-        [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginDto loginDto)
+        [HttpPost("Login")]
+        public async Task<IActionResult> UserLogin(LoginDto loginDto)
         {
             try
             {

@@ -26,6 +26,7 @@ namespace Application.Services
             return _mapper.Map<IEnumerable<OrderDto>>(orders);
         }
 
+        //Get orders for user
         public async Task<IEnumerable<OrderDto>> GetOrderForUserAsync(int userId)
         {
             var orders = await _orderRepository.GetOrdersByUserIdAsync(userId);
@@ -34,29 +35,42 @@ namespace Application.Services
 
 
         //Add order
-        public async Task<OrderDto> AddOrderAsync(int userId, Order order)
+        public async Task<bool> AddOrderAsync(int userId, OrderDto orderDto)
         {
-            var addOrder = _mapper.Map<Order>(order);
+            if (userId < 0 && orderDto == null)
+                return false;
+
+            var addOrder = _mapper.Map<Order>(orderDto);
             addOrder.UserId = userId;
             addOrder.CreatedAt = DateTime.UtcNow;
             await _orderRepository.AddOrderAsync(addOrder);
-            return _mapper.Map<OrderDto>(addOrder);
+            return true;
         }
 
         //Update order
-        public async Task<OrderDto> UpdateOrderStatusAsync(int orderId, string status)
+        public async Task<bool> UpdateOrderStatusAsync(int orderId, string status)
         {
-            var order = await _orderRepository.UpdateOrderStatusAsync(orderId, status);
-            return _mapper.Map<OrderDto>(order);
+            if (orderId < 0 || string.IsNullOrEmpty(status))
+                return false;
+
+            await _orderRepository.UpdateOrderStatusAsync(orderId, status);
+            return true;
         }
 
         //Delete order
-        public async Task DeleteOrderAsync(int id)
+        public async Task<bool> DeleteOrderAsync(int id)
         {
+            if (id < 0)
+                return false;
+
+            var order = await _orderRepository.GetOrderByIdAsync(id);
+            if (order == null)
+                return false;
+
             await _orderRepository.RemoveOrderAsync(id);
+            return true;
         }
 
-        //Get a order for user
         
     }
 }

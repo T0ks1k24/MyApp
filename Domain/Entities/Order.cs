@@ -16,7 +16,7 @@ namespace Domain.Entities
         public decimal TotalPrice { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
-        public string Status { get; set; } // e.g., Pending, Completed
+        public string Status { get; set; } = "The order is accepted"; // e.g., Pending, Completed
 
         // Navigation properties
         public User User { get; set; }

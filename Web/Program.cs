@@ -14,8 +14,11 @@ public class Program
 {
     public static void Main(string[] args)
     {
+
+        // Create a WebApplicationBuilder
         var builder = WebApplication.CreateBuilder(args);
 
+        // Configure JWT Authentication
         builder.Services.AddAuthentication("Bearer").AddJwtBearer(options =>
         {
             options.TokenValidationParameters = new TokenValidationParameters
@@ -30,14 +33,19 @@ public class Program
             };
         });
 
+        // Add Authorization services
         builder.Services.AddAuthorization();
 
+        // Add Controllers
         builder.Services.AddControllers();
+
+        // Configure Swagger for API documentation
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(c =>
         {
             c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
 
+            // Define the security scheme for JWT Bearer tokens
             c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
                 Name = "Authorization",
@@ -48,27 +56,31 @@ public class Program
                 Description = "Enter 'Bearer' [space] and your JWT token: Bearer eyJhbGciOiJIUz..."
             });
 
+            // Add security requirements for the API
             c.AddSecurityRequirement(new OpenApiSecurityRequirement
-            {
         {
-        new OpenApiSecurityScheme
-        {
-            Reference = new OpenApiReference
             {
-                Type = ReferenceType.SecurityScheme,
-                Id = "Bearer"
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                },
+                new string[] {}
             }
-        },
-        new string[] {}
-        }
         });
         });
 
+        // Add AutoMapper for object mapping
         builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+        // Configure Entity Framework with PostgreSQL
         builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+        // Register services and repositories
         builder.Services.AddScoped<ProductService>();
         builder.Services.AddScoped<IProductRepository, ProductRepository>();
         builder.Services.AddScoped<IProductService, ProductService>();
@@ -82,6 +94,7 @@ public class Program
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<ICategoryRepository, CategryRepository>();
 
+        // Build the application
         var app = builder.Build();
 
         if (app.Environment.IsDevelopment())
@@ -92,13 +105,17 @@ public class Program
 
         app.UseHttpsRedirection();
 
+        // Enable routing
         app.UseRouting();
 
-        app.UseAuthorization();
+        // Add authentication and authorization middleware
         app.UseAuthentication();
+        app.UseAuthorization();
 
+        // Map controllers to routes
         app.MapControllers();
 
+        // Run the application
         app.Run();
     }
 }

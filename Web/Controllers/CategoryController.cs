@@ -55,7 +55,7 @@ public class CategoryController : ControllerBase
 
     [Authorize(Roles = "Admin")]
     [HttpPost]
-    public async Task<IActionResult> CreateCategory([FromBody] CategoryDto category)
+    public async Task<IActionResult> AddCategory([FromBody] CategoryDto category)
     {
         if (category == null)
             return BadRequest("Invalid category data.");

@@ -22,6 +22,13 @@ public class OrderRepository : IOrderRepository
         return order;
     }
 
+    //Get Order By Id
+    public async Task<Order> GetOrderByIdAsync(int id)
+    {
+        var order = await _context.Orders.FindAsync(id);
+        return order;
+    }
+
     //Get Orders By User Id
     public async Task<IEnumerable<Order>> GetOrdersByUserIdAsync(int userId)
     {
@@ -33,7 +40,7 @@ public class OrderRepository : IOrderRepository
     }
 
     //Add New Order
-    public async Task<bool> AddOrderAsync(Order order)
+    public async Task<bool> AddOrderAsync( Order order)
     {
         _context.Orders.Add(order);
         await _context.SaveChangesAsync();
@@ -41,18 +48,17 @@ public class OrderRepository : IOrderRepository
     }
 
     //Update order.status
-    public async Task<string> UpdateOrderStatusAsync(int orderId, string status)
+    public async Task<bool> UpdateOrderStatusAsync(int orderId, string status)
     {
         var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == orderId);
-
         if (order == null)
-            throw new ArgumentException($"Order with ID {orderId} not found.");
+            return false;
 
         order.Status = status;
         order.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
-        return $"Status updated to {status}";
+        return true;
     }
 
     //Remove order
@@ -60,13 +66,13 @@ public class OrderRepository : IOrderRepository
     {
         var query = await _context.Orders.FindAsync(orderId);
         if (query == null) return false;
-        
+
         _context.Remove(query);
         await _context.SaveChangesAsync();
         return true;
     }
 
-    
 
-   
+
+
 }
